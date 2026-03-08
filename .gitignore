@@ -1,0 +1,12 @@
+.Rproj.user
+.Rprofile
+.Rhistory
+.RData
+.Ruserdata
+/dev/
+debug.log
+renv/
+*.Rcheck/
+*.tar.gz
+*.so
+*.dll

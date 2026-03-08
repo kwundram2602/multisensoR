@@ -1,0 +1,23 @@
+Package: multisensoR
+Type: Package
+Title: multisensoR For Remote Sensing.
+Version: 0.1.0
+Authors@R: person(
+    "Kjell", "Wundram",
+    role = c("aut", "cre"),
+    email = "kjelldre.wundram@gmail.com",
+    comment = NULL
+  )
+Description: multisensoR for Remote Sensing.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    data.table,
+    reticulate,
+    sf,
+    terra,
+    torch
