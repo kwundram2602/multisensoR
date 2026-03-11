@@ -10,3 +10,4 @@ renv/
 *.tar.gz
 *.so
 *.dll
+python
