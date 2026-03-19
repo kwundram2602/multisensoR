@@ -33,10 +33,8 @@ find_l8_s2_pairs <- function(l8_dir, s2_dir, n_pairs = NULL) {
   l8_dir <- normalizePath(l8_dir, mustWork = TRUE)
   s2_dir <- normalizePath(s2_dir, mustWork = TRUE)
 
-  l8_files <- list.files(l8_dir, pattern = "pair_\\d+_Landsat8_.*\\.tif$",
-                         full.names = TRUE, ignore.case = TRUE)
-  s2_files <- list.files(s2_dir, pattern = "pair_\\d+_S2_.*\\.tif$",
-                         full.names = TRUE, ignore.case = TRUE)
+  l8_files <- list.files(l8_dir, pattern = "\\.tif$", full.names = TRUE)
+  s2_files <- list.files(s2_dir, pattern = "\\.tif$", full.names = TRUE)
 
   if (length(l8_files) == 0) stop("No Landsat8 TIF files found in: ", l8_dir)
   if (length(s2_files) == 0) stop("No S2 TIF files found in: ", s2_dir)

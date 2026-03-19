@@ -2,19 +2,15 @@
 #'
 #' Runs a supervised training loop: Landsat-8 patches are the model input
 #' (predictors) and Sentinel-2 patches are the reconstruction target.
-#' Loss is L1 (pixel-wise mean absolute error), which is standard for
-#' image-to-image translation tasks.
+#' Loss is L1 (pixel-wise mean absolute error).
 #'
 #' @param model         An `nn_module` returned by [unet_model()].
 #' @param train_dl      A `torch::dataloader` whose items contain `$landsat`
-#'   and `$sentinel` tensors (as produced by [landsat_sentinel_dataset()]).
+#'   and `$sentinel` tensors (produced by [landsat_sentinel_dataset()]).
 #' @param epochs        Integer. Number of training epochs. Default `10`.
-#' @param optimizer     An `torch` optimiser instance. If `NULL` (default),
-#'   `optim_adam(model$parameters, lr = 1e-4)` is used.
-#' @param val_dl        Optional validation `dataloader` (same format as
-#'   `train_dl`). If supplied, validation loss is computed after each epoch.
+#' @param optimizer     An `torch` optimiser instance.
+#' @param val_dl        Optional validation `dataloader` .
 #' @param device        A `torch_device` or character string (`"cpu"`, `"cuda"`).
-#'   Defaults to `"cuda"` if available, otherwise `"cpu"`.
 #' @param checkpoint_dir Character or `NULL`. If a directory path is given,
 #'   the model state is saved as `unet_epoch_<N>.pt` after every epoch.
 #' @param verbose       Logical. Print per-epoch progress? Default `TRUE`.
@@ -22,20 +18,6 @@
 #' @return A `data.frame` with columns `epoch`, `train_loss`, and (if
 #'   `val_dl` is provided) `val_loss`. Returned invisibly.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' library(torch)
-#' pairs    <- find_l8_s2_pairs("data/L8/", "data/S2/")
-#' pairs    <- preprocess_pairs(pairs)
-#'
-#' ds       <- landsat_sentinel_dataset(pairs$l8, pairs$s2, augment = TRUE)
-#' train_dl <- torch::dataloader(ds, batch_size = 4, shuffle = TRUE)
-#'
-#' model    <- unet_model(in_channels = 6L, out_channels = 6L)
-#' history  <- train_unet(model, train_dl, epochs = 20,
-#'                        checkpoint_dir = "checkpoints/")
-#' }
 train_unet <- function(model,
                        train_dl,
                        epochs         = 10L,

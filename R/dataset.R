@@ -85,10 +85,8 @@ landsat_sentinel_dataset <- torch::dataset(
 
     # Valid-pixel mask: a pixel is valid only if ALL bands are non-NA in
     # both images.  Shape [1, H, W], dtype float (1 = valid, 0 = NoData).
-    ls_valid <- torch::torch_all(ls_t != 0, dim = 1L, keepdim = TRUE)$to(
-      dtype = torch::torch_float())
-    s2_valid <- torch::torch_all(s2_t != 0, dim = 1L, keepdim = TRUE)$to(
-      dtype = torch::torch_float())
+    ls_valid <- (ls_t != 0)$to(dtype = torch::torch_float())$min(dim = 1L, keepdim = TRUE)[[1]]
+    s2_valid <- (s2_t != 0)$to(dtype = torch::torch_float())$min(dim = 1L, keepdim = TRUE)[[1]]
     mask <- ls_valid * s2_valid   # union: valid only where both are valid
 
     # Normalise [0, 1] → [-1, 1]
