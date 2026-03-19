@@ -7,3 +7,5 @@
 ^dev$
 ^\.Rprofile$
 ^python$
+^debug\.log$
+^demo$
