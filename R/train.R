@@ -27,7 +27,7 @@ train_unet <- function(model,
                        checkpoint_dir = NULL,
                        verbose        = TRUE) {
 
-  # ── Device ──────────────────────────────────────────────────────────────────
+  # Device 
   if (is.null(device)) {
     device <- if (torch::cuda_is_available()) "cuda" else "cpu"
   }
@@ -36,7 +36,7 @@ train_unet <- function(model,
 
   model <- model$to(device = device)
 
-  # ── Optimiser ───────────────────────────────────────────────────────────────
+  # optimizer 
   if (is.null(optimizer)) {
     optimizer <- torch::optim_adam(model$parameters, lr = 1e-4)
   }
@@ -52,22 +52,22 @@ train_unet <- function(model,
     diff[valid]$mean()
   }
 
-  # ── Checkpoint directory ─────────────────────────────────────────────────────
+  # Checkpoint directory 
   if (!is.null(checkpoint_dir) && !dir.exists(checkpoint_dir)) {
     dir.create(checkpoint_dir, recursive = TRUE)
   }
 
-  # ── Training history ─────────────────────────────────────────────────────────
+  # Training history 
   history <- data.frame(
     epoch      = integer(0),
     train_loss = numeric(0),
     val_loss   = numeric(0)
   )
 
-  # ── Epoch loop ───────────────────────────────────────────────────────────────
+  # Epoch loop 
   for (ep in seq_len(as.integer(epochs))) {
 
-    # -- Training phase ---------------------------------------------------------
+    # Training phase 
     model$train()
     train_losses <- numeric(0)
 
@@ -89,7 +89,7 @@ train_unet <- function(model,
 
     mean_train <- mean(train_losses)
 
-    # -- Validation phase (optional) -------------------------------------------
+    # Validation phase 
     mean_val <- NA_real_
     if (!is.null(val_dl)) {
       model$eval()
@@ -112,7 +112,7 @@ train_unet <- function(model,
       mean_val <- mean(val_losses)
     }
 
-    # -- Log -------------------------------------------------------------------
+    # Log , history
     history <- rbind(history, data.frame(
       epoch      = ep,
       train_loss = mean_train,
@@ -129,7 +129,7 @@ train_unet <- function(model,
       }
     }
 
-    # -- Checkpoint ------------------------------------------------------------
+    # Checkpoint
     if (!is.null(checkpoint_dir)) {
       ckpt_path <- file.path(checkpoint_dir,
                              sprintf("unet_epoch_%03d.pt", ep))
@@ -137,6 +137,5 @@ train_unet <- function(model,
       if (verbose) message("  Checkpoint saved: ", ckpt_path)
     }
   }
-
   invisible(history)
 }

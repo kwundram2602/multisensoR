@@ -30,10 +30,6 @@ unet_encoder_block <- torch::nn_module(
 )
 
 #' U-Net Decoder Block
-#'
-#' A single upsampling block: ConvTranspose2d -> BatchNorm -> ReLU,
-#' with optional dropout and skip-connection concatenation.
-#'
 #' @param in_channels Number of input channels (after skip-concat).
 #' @param out_channels Number of output channels.
 #' @param use_dropout Whether to apply 50% dropout (used in first decoder blocks).
@@ -64,40 +60,21 @@ unet_decoder_block <- torch::nn_module(
 #' U-Net Generator
 #'
 #' A U-Net with 4 encoder blocks, a bottleneck, and 4 decoder blocks.
-#' Designed as the generator for a conditional GAN translating
-#' Landsat-8 imagery (default 6 bands) to Sentinel-2 (default 10 bands).
+#' Landsat-8 imagery (default 6 bands) to Sentinel-2 (default 6 bands).
 #'
 #' Architecture (default filters = 64):
-#' ```
-#' Encoder:     in → 64 → 128 → 256 → 512
-#' Bottleneck:            512  → 512
-#' Decoder:     512→512, cat(512) →1024
-#'             1024→256, cat(256) → 512
-#'              512→128, cat(128) → 256
-#'              256→ 64, cat( 64) → 128
-#' Output:      128 → out_channels (Tanh)
-#' ```
-#'
 #' @param in_channels  Number of input channels. Default `6` (Landsat-8 bands).
-#' @param out_channels Number of output channels. Default `10` (Sentinel-2 bands).
+#' @param out_channels Number of output channels. Default `6` (Sentinel-2 bands).
 #' @param filters      Base number of filters. Default `64`.
 #'
 #' @return An `nn_module` instance.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' library(torch)
-#' gen <- unet_model()
-#' x   <- torch_randn(2, 6, 256, 256)
-#' y   <- gen(x)   # [2, 10, 256, 256]
-#' }
 unet_model <- torch::nn_module(
   classname = "UNet",
-  initialize = function(in_channels = 6L, out_channels = 10L, filters = 64L) {
+  initialize = function(in_channels = 6L, out_channels = 6L, filters = 64L) {
     f <- filters
 
-    # Encoder (no BN on first block — standard U-Net)
+    # Encoder  
     self$enc1 <- unet_encoder_block(in_channels, f,     use_batchnorm = FALSE)
     self$enc2 <- unet_encoder_block(f,           f * 2)
     self$enc3 <- unet_encoder_block(f * 2,       f * 4)
@@ -110,14 +87,6 @@ unet_model <- torch::nn_module(
     )
 
     # Decoder
-    # Each block receives the OUTPUT of the previous block (which already
-    # includes the skip-concatenation from that block), then applies its own
-    # ConvTranspose and concatenates the next skip connection.
-    #   dec4 input: b        (f*8  = 512)  → conv → f*8,  cat e4(f*8)  → f*16
-    #   dec3 input: d4       (f*16 =1024)  → conv → f*4,  cat e3(f*4)  → f*8
-    #   dec2 input: d3       (f*8  = 512)  → conv → f*2,  cat e2(f*2)  → f*4
-    #   dec1 input: d2       (f*4  = 256)  → conv → f,    cat e1(f)    → f*2
-    #   output:     d1       (f*2  = 128)  → out_channels
     self$dec4 <- unet_decoder_block(f * 8,  f * 8, use_dropout = TRUE)
     self$dec3 <- unet_decoder_block(f * 16, f * 4, use_dropout = FALSE)
     self$dec2 <- unet_decoder_block(f * 8,  f * 2, use_dropout = FALSE)
@@ -129,7 +98,7 @@ unet_model <- torch::nn_module(
                                  kernel_size = 4, stride = 2, padding = 1),
       torch::nn_tanh()
     )
-  },
+  }, # forward layers : enocers, bottleneck, decoders, output layer
   forward = function(x) {
     e1 <- self$enc1(x)
     e2 <- self$enc2(e1)

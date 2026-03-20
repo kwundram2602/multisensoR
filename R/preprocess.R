@@ -23,12 +23,6 @@
 #' @return A data.frame with columns `pair_id`, `l8`, and `s2` (absolute paths),
 #'   one row per valid pair. Raises an error if no pairs are found.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' pairs <- find_l8_s2_pairs("data/landsat/", "data/sentinel/")
-#' pairs <- find_l8_s2_pairs("data/landsat/", "data/sentinel/", n_pairs = 4)
-#' }
 find_l8_s2_pairs <- function(l8_dir, s2_dir, n_pairs = NULL) {
   l8_dir <- normalizePath(l8_dir, mustWork = TRUE)
   s2_dir <- normalizePath(s2_dir, mustWork = TRUE)
@@ -76,7 +70,7 @@ find_l8_s2_pairs <- function(l8_dir, s2_dir, n_pairs = NULL) {
 #'
 #' Computes per-band min/max for each file in `pairs` and prints a summary
 #' table. Warns if values fall outside the expected `[expected_min, expected_max]`
-#' range (default `[0, 1]` for reflectance data scaled by the GEE pipeline).
+#' range (default `[0, 1]`.
 #'
 #' @param pairs        data.frame returned by [find_l8_s2_pairs()].
 #' @param expected_min Numeric. Expected minimum value. Default `0`.
@@ -87,12 +81,6 @@ find_l8_s2_pairs <- function(l8_dir, s2_dir, n_pairs = NULL) {
 #' @return A data.frame with columns `pair_id`, `sensor`, `band`, `min`, `max`
 #'   (invisibly). Printed as a formatted table.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' pairs <- find_l8_s2_pairs("data/landsat/", "data/sentinel/")
-#' check_scaling(pairs)
-#' }
 check_scaling <- function(pairs, expected_min = 0, expected_max = 1,
                           sample_frac = 0.01) {
   results <- lapply(seq_len(nrow(pairs)), function(i) {
@@ -142,12 +130,6 @@ check_scaling <- function(pairs, expected_min = 0, expected_max = 1,
 
 
 #' Align a Landsat-8 image to the Sentinel-2 reference grid
-#'
-#' Reprojects (if needed) and resamples the Landsat-8 image so that it shares
-#' the exact CRS, pixel size, and alignment of the paired Sentinel-2 image.
-#' After alignment, both files have the same number of rows and columns and can
-#' be tiled with identical row/column indices in [landsat_sentinel_dataset()].
-#'
 #' @param l8_path  Character. Path to the Landsat-8 GeoTIFF (reflectance [0, 1]).
 #' @param s2_path  Character. Path to the Sentinel-2 GeoTIFF (reflectance [0, 1]).
 #' @param out_path Character. Output path for the resampled L8 file. Defaults to
@@ -157,12 +139,6 @@ check_scaling <- function(pairs, expected_min = 0, expected_max = 1,
 #'
 #' @return The `out_path` string, invisibly.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' align_l8_to_s2("export/pair_01/pair_01_Landsat8_20220612.tif",
-#'                "export/pair_01/pair_01_S2_20220614.tif")
-#' }
 align_l8_to_s2 <- function(l8_path, s2_path,
                             out_path = sub("\\.tif$", "_aligned.tif",
                                           l8_path, ignore.case = TRUE),
@@ -191,17 +167,13 @@ align_l8_to_s2 <- function(l8_path, s2_path,
   message("Aligned L8 written to: ", out_path)
   invisible(out_path)
 }
-
-
 #' Apply a shared NoData mask to an aligned L8 / S2 pair
 #'
 #' A pixel is set to `NA` in **both** images if it is `NA` in **either** image
-#' (union of NoData masks). This ensures model inputs and targets are always
-#' valid at the same locations.
+#' (union of NoData masks). 
 #'
 #' Requires both rasters to already share the same grid (run [align_l8_to_s2()]
 #' first).
-#'
 #' @param l8_path  Character. Path to the aligned Landsat-8 GeoTIFF.
 #' @param s2_path  Character. Path to the Sentinel-2 GeoTIFF.
 #' @param out_l8   Output path for the masked L8 file. Defaults to
@@ -211,14 +183,6 @@ align_l8_to_s2 <- function(l8_path, s2_path,
 #'
 #' @return A named list with elements `l8` and `s2` (output paths), invisibly.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' mask_nodata_pair(
-#'   "preprocessed_pairs/pair_01_Landsat8_aligned.tif",
-#'   "tif_pairs/pair_01_S2_20220617.tif"
-#' )
-#' }
 mask_nodata_pair <- function(l8_path, s2_path,
                              out_l8 = sub("\\.tif$", "_masked.tif", l8_path, ignore.case = TRUE),
                              out_s2 = sub("\\.tif$", "_masked.tif", s2_path, ignore.case = TRUE),
@@ -230,7 +194,7 @@ mask_nodata_pair <- function(l8_path, s2_path,
   na_l8 <- is.na(terra::app(l8, "sum"))
   na_s2 <- is.na(terra::app(s2, "sum"))
 
-  # GEE exports masked pixels as 0 instead of NA — treat all-zero L8 pixels as NoData
+  # treat all-zero L8 pixels as NoData
   if (zero_as_nodata) {
     zero_l8 <- terra::app(l8, "sum") == 0
     na_l8   <- na_l8 | zero_l8
@@ -337,7 +301,7 @@ preprocess_pairs <- function(pairs,
       align_l8_to_s2(l8_scaled, s2_scaled, out_path = l8_aligned, ...)
     }
 
-    # Step 3 (optional): harmonise NoData masks
+    # Step 3 : harmonise NoData masks
     if (mask_nodata) {
       l8_out <- sub("_aligned\\.tif$", "_aligned_masked.tif", l8_aligned, ignore.case = TRUE)
       s2_out <- sub("_scaled\\.tif$",  "_scaled_masked.tif",  s2_scaled,  ignore.case = TRUE)

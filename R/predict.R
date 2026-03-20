@@ -1,10 +1,4 @@
 #' Predict Sentinel-2 from a Landsat-8 image using a trained U-Net
-#'
-#' Loads a saved U-Net checkpoint (state dict `.pt` file), tiles the input
-#' Landsat-8 GeoTIFF into non-overlapping patches, runs inference on each
-#' patch, and reassembles the predictions into a GeoTIFF with the same
-#' spatial reference as the input.
-#'
 #' @param model_path   Path to a `.pt` checkpoint written by [train_unet()].
 #' @param landsat_path Path to a Landsat-8 GeoTIFF whose pixel values are
 #'   scaled to reflectance \[0, 1\].
@@ -20,16 +14,6 @@
 #'   extent / CRS as the input. Pixel values are in \[0, 1\] (reflectance).
 #'   Pixels not covered by any full patch are `NA`.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' pred <- predict_unet(
-#'   model_path   = "checkpoints/unet_epoch_005.pt",
-#'   landsat_path = "data/L8/scene.tif",
-#'   out_path     = "output/pred_s2.tif"
-#' )
-#' terra::plot(pred)
-#' }
 predict_unet <- function(model_path,
                          landsat_path,
                          out_path     = NULL,
@@ -42,20 +26,20 @@ predict_unet <- function(model_path,
 
   patch_size <- as.integer(patch_size)
 
-  # ── Device ──────────────────────────────────────────────────────────────────
+  # Device 
   if (is.null(device)) {
     device <- if (torch::cuda_is_available()) "cuda" else "cpu"
   }
   dev <- torch::torch_device(device)
   message("Inference on: ", device)
 
-  # ── Model ───────────────────────────────────────────────────────────────────
+  # Model 
   model <- unet_model(in_channels = in_channels, out_channels = out_channels)
   model$load_state_dict(torch::torch_load(model_path))
   model <- model$to(device = dev)
   model$eval()
 
-  # ── Input raster ────────────────────────────────────────────────────────────
+  # Input raster 
   l8_rast <- terra::rast(landsat_path)
   nr <- terra::nrow(l8_rast)
   nc <- terra::ncol(l8_rast)
@@ -72,7 +56,7 @@ predict_unet <- function(model_path,
   patch_list <- vector("list", n_patches)
   idx <- 1L
 
-  # ── Inference loop ───────────────────────────────────────────────────────────
+  # Inference loop 
   torch::with_no_grad({
     for (r0 in row_starts) {
       for (c0 in col_starts) {
@@ -110,14 +94,14 @@ predict_unet <- function(model_path,
     }
   })
 
-  # ── Reassemble patches ───────────────────────────────────────────────────────
+  # Reassemble patches 
   pred_rast <- if (length(patch_list) == 1L) {
     patch_list[[1L]]
   } else {
     do.call(terra::merge, patch_list)
   }
 
-  # ── Output ──────────────────────────────────────────────────────────────────
+  # Output 
   if (!is.null(out_path)) {
     terra::writeRaster(pred_rast, out_path, overwrite = TRUE)
     message("Prediction saved: ", out_path)

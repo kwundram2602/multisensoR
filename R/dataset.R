@@ -1,14 +1,12 @@
 #' Landsat-8 / Sentinel-2 Patch Dataset
 #'
-#' A `torch` dataset that reads co-registered, aligned Landsat-8 and Sentinel-2
-#' GeoTIFF pairs and yields square patches as normalised float tensors.
+#' A `torch` dataset that reads co-registered, aligned Landsat-8 and Sentinel-2 pairs.
 #'
 #' **Assumptions:**
 #' - Both files are on the **same pixel grid** (same CRS, resolution, extent).
 #'   Use [preprocess_pairs()] to align L8 (30 m) to the S2 (10 m) grid first.
-#' - Pixel values are already scaled to reflectance **[0, 1]** (as produced by
-#'   the GEE export pipeline).
-#' - Both sensors export **6 bands** in matching spectral order:
+#' - Pixel values are already scaled to reflectance **[0, 1]**.
+#' - Both sensors export 6 bands in matching order:
 #'   Blue, Green, Red, NIR, SWIR1, SWIR2.
 #'
 #' @param landsat_files  Character vector of paths to (aligned) Landsat-8 GeoTIFFs.
@@ -21,24 +19,6 @@
 #'
 #' @return A `torch::dataset` object usable with [torch::dataloader()].
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' pairs <- find_l8_s2_pairs("export/")
-#' pairs <- preprocess_pairs(pairs)        # align L8 → 10 m grid
-#'
-#' ds <- landsat_sentinel_dataset(
-#'   landsat_files  = pairs$l8,
-#'   sentinel_files = pairs$s2,
-#'   patch_size = 256,
-#'   augment    = TRUE
-#' )
-#' dl <- torch::dataloader(ds, batch_size = 4, shuffle = TRUE, num_workers = 2)
-#'
-#' batch <- coro::collect(dl, 1)[[1]]
-#' dim(batch$landsat)   # [4, 6, 256, 256]  — values in [-1, 1]
-#' dim(batch$sentinel)  # [4, 6, 256, 256]  — values in [-1, 1]
-#' }
 landsat_sentinel_dataset <- torch::dataset(
   name = "LandsatSentinelDataset",
 
@@ -110,11 +90,6 @@ landsat_sentinel_dataset <- torch::dataset(
     list(landsat = ls_t, sentinel = s2_t, mask = mask)
   }
 )
-
-# ---------------------------------------------------------------------------
-# Internal helpers (not exported)
-# ---------------------------------------------------------------------------
-
 #' Build a data.frame of valid patch origins for all image files
 #' @noRd
 .build_patch_index <- function(landsat_files, patch_size, stride) {
