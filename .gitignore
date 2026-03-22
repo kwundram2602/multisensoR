@@ -11,3 +11,5 @@ renv/
 *.so
 *.dll
 python
+/.quarto/
+**/*.quarto_ipynb

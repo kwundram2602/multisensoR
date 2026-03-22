@@ -1,6 +1,6 @@
 .libPaths()
 library("remotes")
-remotes::install_github("kwundram2602/multisensoR", ref = "dev")
+remotes::install_github("kwundram2602/multisensoR")
 library("multisensoR")
 library("terra")
 # install torch, session restart might be necessary
@@ -8,7 +8,6 @@ if (!torch::torch_is_installed()) torch::install_torch()
 
 data_s2 <- system.file("extdata/subsamples/S2", package = "multisensoR")
 data_l8 <- system.file("extdata/subsamples/L8", package = "multisensoR")
-
 # out dir
 out <- file.path(getwd(), "ms_out")
 # preprocessed tifs
