@@ -6,9 +6,11 @@
 
 **multisensoR** is an R package for deep-learning-based image translation from
 Landsat-8 to Sentinel-2 using a U-Net architecture. Given image
-pairs, it learns to map Landsat-8 reflectance to Sentinel-2 reflectance, enabling temporal gap-filling. The package is rather experimental right now.
+pairs, it learns to map Landsat-8 reflectance to Sentinel-2 reflectance, for temporal gap-filling. The package is rather experimental right now and results do not seem to be helpful at the moment.
+Right now the package resamples Landsat data (30m) to the Sentinel-2 grid (10m) before training. This is probably a cause for the limited performance as the resampling creates information in the Landsat scene that might not exist.
+![preview](man/figures/preview.png)
 
-![Example Landsat-8 / Sentinel-2 pair from the sample data (`inst/extdata/subsamples/`): Landsat-8 30 m input (left) and Sentinel-2 10 m target (right), RGB true colour, pair_01.](man/figures/preview.png)
+*Example Landsat-8 / Sentinel-2 pair from the sample data (`inst/extdata/subsamples/`): Landsat-8 30 m input (left) and Sentinel-2 10 m target (right), RGB true colour, pair\_01.*
 
 ## Installation
 
@@ -75,6 +77,12 @@ pred <- predict_unet(
 ```
 
 See [demo/train_and_predict.R](demo/train_and_predict.R) for the full script.
+
+### Example output
+
+![prediction example](man/figures/prediction_example.png)
+
+*Model output on `pair_01`: Landsat-8 reflectance input (left) and the predicted Sentinel-2 reflectance (right), RGB true colour. The visible grid lines in the prediction are patching-artefacts. It seems the patching is a current limitation.*
 
 ## License
 

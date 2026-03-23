@@ -1,6 +1,6 @@
 #' Landsat-8 / Sentinel-2 Patch Dataset
 #'
-#' A `torch` dataset that reads co-registered, aligned Landsat-8 and Sentinel-2 pairs.
+#' A `torch` dataset that reads aligned Landsat-8 and Sentinel-2 pairs.
 #'
 #' **Assumptions:**
 #' - Both files are on the **same pixel grid** (same CRS, resolution, extent).
