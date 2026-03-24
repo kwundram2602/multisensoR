@@ -12,9 +12,9 @@
       </HistItem>
     </Histograms>
     <Metadata>
-      <MDI key="STATISTICS_MINIMUM">4204</MDI>
       <MDI key="STATISTICS_MAXIMUM">20166</MDI>
       <MDI key="STATISTICS_MEAN">9020.7531487261</MDI>
+      <MDI key="STATISTICS_MINIMUM">4204</MDI>
       <MDI key="STATISTICS_STDDEV">845.21823638066</MDI>
       <MDI key="STATISTICS_VALID_PERCENT">100</MDI>
     </Metadata>
@@ -32,9 +32,9 @@
       </HistItem>
     </Histograms>
     <Metadata>
-      <MDI key="STATISTICS_MINIMUM">7828</MDI>
       <MDI key="STATISTICS_MAXIMUM">21237</MDI>
       <MDI key="STATISTICS_MEAN">10157.224443116</MDI>
+      <MDI key="STATISTICS_MINIMUM">7828</MDI>
       <MDI key="STATISTICS_STDDEV">1027.5016806366</MDI>
       <MDI key="STATISTICS_VALID_PERCENT">100</MDI>
     </Metadata>
@@ -52,20 +52,41 @@
       </HistItem>
     </Histograms>
     <Metadata>
-      <MDI key="STATISTICS_MINIMUM">7785</MDI>
       <MDI key="STATISTICS_MAXIMUM">22219</MDI>
       <MDI key="STATISTICS_MEAN">10539.924349411</MDI>
+      <MDI key="STATISTICS_MINIMUM">7785</MDI>
       <MDI key="STATISTICS_STDDEV">1311.8797204308</MDI>
       <MDI key="STATISTICS_VALID_PERCENT">100</MDI>
     </Metadata>
   </PAMRasterBand>
   <PAMRasterBand band="4">
     <Description>SR_B5</Description>
+    <Metadata>
+      <MDI key="STATISTICS_MINIMUM">8241</MDI>
+      <MDI key="STATISTICS_MAXIMUM">24926</MDI>
+      <MDI key="STATISTICS_MEAN">13895.698578185</MDI>
+      <MDI key="STATISTICS_STDDEV">2466.9943522076</MDI>
+      <MDI key="STATISTICS_VALID_PERCENT">100</MDI>
+    </Metadata>
   </PAMRasterBand>
   <PAMRasterBand band="5">
     <Description>SR_B6</Description>
+    <Metadata>
+      <MDI key="STATISTICS_MINIMUM">8156</MDI>
+      <MDI key="STATISTICS_MAXIMUM">26207</MDI>
+      <MDI key="STATISTICS_MEAN">13603.816411006</MDI>
+      <MDI key="STATISTICS_STDDEV">2399.9394915704</MDI>
+      <MDI key="STATISTICS_VALID_PERCENT">100</MDI>
+    </Metadata>
   </PAMRasterBand>
   <PAMRasterBand band="6">
     <Description>SR_B7</Description>
+    <Metadata>
+      <MDI key="STATISTICS_MINIMUM">7969</MDI>
+      <MDI key="STATISTICS_MAXIMUM">22438</MDI>
+      <MDI key="STATISTICS_MEAN">11569.933867528</MDI>
+      <MDI key="STATISTICS_STDDEV">1549.931618293</MDI>
+      <MDI key="STATISTICS_VALID_PERCENT">100</MDI>
+    </Metadata>
   </PAMRasterBand>
 </PAMDataset>

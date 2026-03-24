@@ -30,10 +30,9 @@ unet_encoder_block <- torch::nn_module(
 )
 
 #' U-Net Decoder Block
-#' @param in_channels Number of input channels (after skip-concat).
+#' @param in_channels Number of input channels.
 #' @param out_channels Number of output channels.
-#' @param use_dropout Whether to apply 50% dropout (used in first decoder blocks).
-#'
+#' @param use_dropout Whether to apply 50% dropout 
 #' @return An `nn_module` instance.
 #' @export
 unet_decoder_block <- torch::nn_module(

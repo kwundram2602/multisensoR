@@ -7,11 +7,11 @@
 unet_decoder_block(in_channels, out_channels, use_dropout = FALSE)
 }
 \arguments{
-\item{in_channels}{Number of input channels (after skip-concat).}
+\item{in_channels}{Number of input channels.}
 
 \item{out_channels}{Number of output channels.}
 
-\item{use_dropout}{Whether to apply 50% dropout (used in first decoder blocks).}
+\item{use_dropout}{Whether to apply 50% dropout}
 }
 \value{
 An `nn_module` instance.

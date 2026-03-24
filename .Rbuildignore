@@ -9,3 +9,5 @@
 ^python$
 ^debug\.log$
 ^demo$
+^ms_out$
+^README\.md$

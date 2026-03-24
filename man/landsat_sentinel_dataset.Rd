@@ -29,7 +29,7 @@ landsat_sentinel_dataset(
 A `torch::dataset` object usable with [torch::dataloader()].
 }
 \description{
-A `torch` dataset that reads co-registered, aligned Landsat-8 and Sentinel-2 pairs.
+A `torch` dataset that reads aligned Landsat-8 and Sentinel-2 pairs.
 }
 \details{
 **Assumptions:**

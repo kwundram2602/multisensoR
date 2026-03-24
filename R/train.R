@@ -1,6 +1,6 @@
 #' Train the U-Net on Landsat-8 → Sentinel-2 image translation
 #'
-#' Runs a supervised training loop: Landsat-8 patches are the model input
+#' Runs a  training loop: Landsat-8 patches are the model input
 #' (predictors) and Sentinel-2 patches are the reconstruction target.
 #' Loss is L1 (pixel-wise mean absolute error).
 #'
@@ -44,6 +44,7 @@ train_unet <- function(model,
   # Masked L1: mean absolute error only over valid (non-NoData) pixels.
   # Falls back to standard L1 when no mask is present in the batch.
   masked_l1 <- function(pred, target, mask = NULL) {
+    # absolute error
     diff <- torch::torch_abs(pred - target)
     if (is.null(mask)) return(diff$mean())
     # mask: [B, 1, H, W] — broadcast across channels
@@ -104,6 +105,7 @@ train_unet <- function(model,
                   else NULL
 
           pred      <- model(x)
+          # L1 loss
           val_loss  <- masked_l1(pred, y, mask)
           val_losses <- c(val_losses, val_loss$item())
         })

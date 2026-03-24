@@ -76,11 +76,13 @@ landsat_sentinel_dataset <- torch::dataset(
     # Random augmentation (applied identically to input, target and mask)
     if (self$augment) {
       if (runif(1) > 0.5) {
+        # horizontal flip (dim 3 = width)
         ls_t <- torch::torch_flip(ls_t, 3L)
         s2_t <- torch::torch_flip(s2_t, 3L)
         mask <- torch::torch_flip(mask, 3L)
       }
       if (runif(1) > 0.5) {
+        # vertical flip (dim 2 = height)
         ls_t <- torch::torch_flip(ls_t, 2L)
         s2_t <- torch::torch_flip(s2_t, 2L)
         mask <- torch::torch_flip(mask, 2L)
@@ -100,17 +102,18 @@ landsat_sentinel_dataset <- torch::dataset(
     r    <- terra::rast(landsat_files[[fid]])
     nr   <- terra::nrow(r)
     nc   <- terra::ncol(r)
-
+    # e.g c(1, 257, 513, ...) as start ids
     row_starts <- seq(1L, nr - p + 1L, by = s)
     col_starts <- seq(1L, nc - p + 1L, by = s)
 
     if (length(row_starts) == 0 || length(col_starts) == 0) return(NULL)
-
+    # Create a data.frame of all (file_id, row_start, col_start) combinations
     expand.grid(file_id = fid, row = row_starts, col = col_starts)
   })
 
   entries <- Filter(Negate(is.null), entries)
   if (length(entries) == 0) return(data.frame())
+  # Combine all entries into a single data.frame
   do.call(rbind, entries)
 }
 
@@ -130,7 +133,7 @@ landsat_sentinel_dataset <- torch::dataset(
   patch <- terra::crop(rast_obj, e)
 
   mat <- terra::as.array(patch)      # [H, W, C]
-  mat[is.na(mat)] <- 0               # mask out NoData as 0 (pre-normalise)
+  mat[is.na(mat)] <- 0               # mask out NoData as 0
   arr <- aperm(mat, c(3L, 1L, 2L))  # [C, H, W]
   torch::torch_tensor(arr, dtype = torch::torch_float())
 }

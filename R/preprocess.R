@@ -153,7 +153,7 @@ align_l8_to_s2 <- function(l8_path, s2_path,
     l8 <- terra::project(l8, terra::crs(s2), method = method)
   }
 
-  # Restrict both to their geographic intersection
+  # Crop to shared extent (intersection) 
   shared_ext <- terra::intersect(terra::ext(l8), terra::ext(s2))
   if (is.null(shared_ext)) stop("L8 and S2 images do not overlap: ", l8_path)
   l8 <- terra::crop(l8, shared_ext)
