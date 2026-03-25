@@ -1,7 +1,7 @@
 .libPaths()
 library("remotes")
 
-remotes::install_github("kwundram2602/multisensoR")
+remotes::install_github("kwundram2602/multisensoR", ref = "v0.1.0",force = TRUE)
 library("multisensoR")
 library("terra")
 # install torch, session restart might be necessary
